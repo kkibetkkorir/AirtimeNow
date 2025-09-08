@@ -108,20 +108,20 @@ function App() {
         return <Support />;
       case 'contact':
         return <Contact />;
-      case 'auth':
-        return <Auth auth={auth} db={db} setCurrentPage={setCurrentPage} setUser={setUser} updateUserData={updateUserData} />;
-      case 'profile':
-        return <Profile user={user} db={db} updateUserData={updateUserData} />;
-      case 'admin':
-        return <AdminDashboard user={user} db={db} />;
-      case 'terms':
-        return <TermsOfService />;
-      case 'privacy':
-        return <PrivacyPolicy />;
-      case 'refund':
-        return <RefundPolicy />;
-      case 'faq':
-        return <FAQ />;
+        case 'auth':
+          return <Auth auth={auth} db={db} setCurrentPage={setCurrentPage} setUser={setUser} updateUserData={updateUserData} />;
+        case 'profile':
+          return <Profile user={user} db={db} updateUserData={updateUserData} />;
+        case 'admin':
+          return <AdminDashboard user={user} db={db} />;
+        case 'terms':
+          return <TermsOfService />;
+        case 'privacy':
+          return <PrivacyPolicy />;
+        case 'refund':
+          return <RefundPolicy />;
+        case 'faq':
+          return <FAQ />;
       default:
         return <Home />;
     }
