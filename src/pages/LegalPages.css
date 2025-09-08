@@ -1,0 +1,124 @@
+/* LegalPages.css */
+.legal-content {
+  background: white;
+  padding: 40px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  margin-bottom: 40px;
+}
+
+.legal-section {
+  margin-bottom: 30px;
+}
+
+.legal-section h2 {
+  color: var(--primary);
+  margin-bottom: 15px;
+  font-size: 1.5rem;
+}
+
+.legal-section p {
+  margin-bottom: 15px;
+  line-height: 1.6;
+}
+
+.legal-section ul {
+  margin-left: 20px;
+  margin-bottom: 15px;
+}
+
+.legal-section li {
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+.legal-section strong {
+  color: var(--dark);
+}
+
+.faq-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.faq-list {
+  margin-bottom: 40px;
+}
+
+.faq-item {
+  background: white;
+  border-radius: var(--border-radius);
+  margin-bottom: 15px;
+  overflow: hidden;
+  box-shadow: var(--box-shadow);
+}
+
+.faq-question {
+  padding: 20px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  background-color: #f8f9fa;
+  transition: var(--transition);
+}
+
+.faq-question:hover {
+  background-color: #e9ecef;
+}
+
+.faq-answer {
+  padding: 20px;
+  color: var(--gray);
+  border-top: 1px solid #eee;
+  line-height: 1.6;
+}
+
+.support-cta {
+  text-align: center;
+  padding: 40px;
+  background: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+}
+
+.support-cta h2 {
+  margin-bottom: 15px;
+  color: var(--dark);
+}
+
+.support-cta p {
+  margin-bottom: 25px;
+  color: var(--gray);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .legal-content {
+    padding: 25px;
+  }
+
+  .legal-section h2 {
+    font-size: 1.3rem;
+  }
+
+  .support-cta {
+    padding: 25px;
+  }
+}
+
+@media (max-width: 480px) {
+  .legal-content {
+    padding: 20px;
+  }
+
+  .faq-question {
+    padding: 15px;
+    font-size: 0.95rem;
+  }
+
+  .faq-answer {
+    padding: 15px;
+  }
+}
