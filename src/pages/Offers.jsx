@@ -3,15 +3,17 @@ import { addDoc, collection, doc, updateDoc, arrayUnion } from 'firebase/firesto
 
 const Offers = ({ user, db }) => {
   const [selectedOffer, setSelectedOffer] = useState(null);
+  const [paymentMethod, setPaymentMethod] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [loading, setLoading] = useState(false);
   const [paystackLoaded, setPaystackLoaded] = useState(false);
+  const [message, setMessage] = useState('');
 
   const offers = [
     {
       id: 1,
       name: 'Starter Pack',
-      price: 50,
+      price: 5,
       features: [
         '10% bonus airtime',
         'Valid for 30 days',
@@ -22,7 +24,7 @@ const Offers = ({ user, db }) => {
     {
       id: 2,
       name: 'Value Pack',
-      price: 100,
+      price: 15,
       features: [
         '15% bonus airtime',
         'Valid for 60 days',
@@ -34,15 +36,43 @@ const Offers = ({ user, db }) => {
     {
       id: 3,
       name: 'Premium Pack',
-      price: 250,
+      price: 30,
       features: [
         '20% bonus airtime',
         'Valid for 90 days',
         'All networks',
         'Instant delivery',
-        '2GB data bonus',
+        '3GB data bonus',
         '10 free SMS'
       ]
+    }
+  ];
+
+  // Network specific offers
+  const networkOffers = [
+    {
+      id: 4,
+      name: 'AT&T Special',
+      price: 10,
+      network: 'AT&T',
+      description: 'Get 15% extra airtime on all AT&T top-ups this week',
+      color: '#e74c3c'
+    },
+    {
+      id: 5,
+      name: 'Verizon Deal',
+      price: 20,
+      network: 'Verizon',
+      description: 'Double data bonus with every Verizon airtime purchase',
+      color: '#3498db'
+    },
+    {
+      id: 6,
+      name: 'T-Mobile Offer',
+      price: 25,
+      network: 'T-Mobile',
+      description: 'Free international calls bonus with T-Mobile top-ups',
+      color: '#9b59b6'
     }
   ];
 
@@ -72,11 +102,12 @@ const Offers = ({ user, db }) => {
     }
 
     setLoading(true);
+    setMessage('Initializing payment...');
 
     // Initialize Paystack
     const paystack = new window.PaystackPop();
 
-    // Generate a unique reference (you might want to use a better method)
+    // Generate a unique reference
     const reference = `PSK_${user.uid.slice(0, 8)}_${Date.now()}`;
 
     // Configure transaction
@@ -110,6 +141,8 @@ const Offers = ({ user, db }) => {
       channels: ['card', 'bank', 'ussd', 'qr', 'mobile_money'],
       onSuccess: async (transaction) => {
         // Payment successful
+        setMessage('Payment successful! Recording your purchase...');
+
         try {
           // Record the purchase
           const purchaseData = {
@@ -132,12 +165,16 @@ const Offers = ({ user, db }) => {
             purchases: arrayUnion(purchaseRef.id)
           });
 
-          alert(`Purchase successful! Your ${selectedOffer.name} has been activated.`);
-          setSelectedOffer(null);
-          setPhoneNumber('');
+          setMessage(`Purchase successful! Your ${selectedOffer.name} has been activated.`);
+          setTimeout(() => {
+            setSelectedOffer(null);
+            setPhoneNumber('');
+            setPaymentMethod('');
+            setMessage('');
+          }, 3000);
         } catch (error) {
           console.error('Error recording purchase:', error);
-          alert('Payment was successful but there was an error recording your purchase. Please contact support with reference: ' + transaction.reference);
+          setMessage('Payment was successful but there was an error recording your purchase. Please contact support with reference: ' + transaction.reference);
         } finally {
           setLoading(false);
         }
@@ -145,15 +182,44 @@ const Offers = ({ user, db }) => {
       onCancel: () => {
         // User closed the payment modal
         setLoading(false);
-        alert('Payment was cancelled');
+        setMessage('Payment was cancelled');
+        setTimeout(() => setMessage(''), 3000);
       },
       onError: (error) => {
         // Handle payment error
         setLoading(false);
         console.error('Paystack error:', error);
-        alert('Payment failed: ' + error.message);
+        setMessage('Payment failed: ' + error.message);
+        setTimeout(() => setMessage(''), 5000);
       }
     });
+  };
+
+  const handlePurchase = () => {
+    if (!user) {
+      alert('Please login to make a purchase');
+      return;
+    }
+
+    if (!selectedOffer || !paymentMethod || !phoneNumber) {
+      alert('Please select an offer, payment method, and provide your phone number');
+      return;
+    }
+
+    if (paymentMethod === 'paystack') {
+      handlePaystackPayment();
+    } else {
+      // Handle other payment methods
+      setLoading(true);
+      setMessage(`Processing ${paymentMethod} payment...`);
+
+      // Simulate other payment processing
+      setTimeout(() => {
+        setLoading(false);
+        alert(`${paymentMethod} integration would be handled here`);
+        setMessage('');
+      }, 2000);
+    }
   };
 
   return (
@@ -163,6 +229,12 @@ const Offers = ({ user, db }) => {
           <h1>Special Airtime Offers</h1>
           <p>Get the best value with our exclusive airtime deals and promotions</p>
         </div>
+
+        {message && (
+          <div className={`message ${message.includes('Error') || message.includes('failed') ? 'error' : 'info'}`}>
+            {message}
+          </div>
+        )}
 
         <div className="offers-grid">
           {offers.map(offer => (
@@ -192,11 +264,40 @@ const Offers = ({ user, db }) => {
           ))}
         </div>
 
+        <div className="page-header">
+          <h2>Network Specific Offers</h2>
+          <p>Special deals tailored for your mobile network</p>
+        </div>
+
+        <div className="offers-grid">
+          {networkOffers.map(offer => (
+            <div key={offer.id} className="offer-card">
+              <div className="offer-header" style={{ background: offer.color }}>
+                <h3>{offer.name}</h3>
+              </div>
+              <div className="offer-body">
+                <div className="offer-price">${offer.price}</div>
+                <p>{offer.description}</p>
+                <button
+                  className="btn btn-outline"
+                  style={{ width: '100%', marginTop: '20px' }}
+                  onClick={() => setSelectedOffer(offer)}
+                  disabled={!paystackLoaded}
+                >
+                  {paystackLoaded ? 'View Details' : 'Loading...'}
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
         {selectedOffer && (
           <div className="purchase-modal">
             <div className="modal-content">
               <h2>Purchase {selectedOffer.name}</h2>
               <p>Price: ${selectedOffer.price}</p>
+
+              {selectedOffer.description && <p>{selectedOffer.description}</p>}
 
               <div className="form-group">
                 <label htmlFor="phone">Your Phone Number</label>
@@ -208,7 +309,35 @@ const Offers = ({ user, db }) => {
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value)}
                   required
+                  disabled={loading}
                 />
+              </div>
+
+              <div className="form-group">
+                <label>Payment Method</label>
+                <div className="payment-options">
+                  <div
+                    className={`payment-option ${paymentMethod === 'paystack' ? 'selected' : ''}`}
+                    onClick={() => !loading && setPaymentMethod('paystack')}
+                  >
+                    <i className="fas fa-credit-card"></i>
+                    <span>Paystack</span>
+                  </div>
+                  <div
+                    className={`payment-option ${paymentMethod === 'mpesa' ? 'selected' : ''}`}
+                    onClick={() => !loading && setPaymentMethod('mpesa')}
+                  >
+                    <i className="fas fa-mobile-alt"></i>
+                    <span>M-Pesa</span>
+                  </div>
+                  <div
+                    className={`payment-option ${paymentMethod === 'paypal' ? 'selected' : ''}`}
+                    onClick={() => !loading && setPaymentMethod('paypal')}
+                  >
+                    <i className="fab fa-paypal"></i>
+                    <span>PayPal</span>
+                  </div>
+                </div>
               </div>
 
               <div className="modal-actions">
@@ -217,16 +346,19 @@ const Offers = ({ user, db }) => {
                   onClick={() => {
                     setSelectedOffer(null);
                     setPhoneNumber('');
+                    setPaymentMethod('');
+                    setMessage('');
                   }}
+                  disabled={loading}
                 >
                   Cancel
                 </button>
                 <button
                   className="btn btn-primary"
-                  onClick={handlePaystackPayment}
-                  disabled={loading || !phoneNumber}
+                  onClick={handlePurchase}
+                  disabled={loading || !phoneNumber || !paymentMethod}
                 >
-                  {loading ? 'Processing...' : 'Proceed to Payment'}
+                  {loading ? 'Processing...' : 'Confirm Purchase'}
                 </button>
               </div>
             </div>

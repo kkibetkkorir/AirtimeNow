@@ -16,7 +16,7 @@ const Footer = ({ handleNavigation }) => {
               <a href="#"><i className="fab fa-linkedin-in"></i></a>
             </div>
           </div>
-          <div className="footer-column">
+          <div className="footer-column wrapper">
             <h3>Quick Links</h3>
             <ul className="footer-links">
               <li><a href="#" onClick={() => handleNavigation('home')}>Home</a></li>
@@ -24,8 +24,6 @@ const Footer = ({ handleNavigation }) => {
               <li><a href="#" onClick={() => handleNavigation('support')}>Support</a></li>
               <li><a href="#" onClick={() => handleNavigation('contact')}>Contact</a></li>
             </ul>
-          </div>
-          <div className="footer-column">
             <h3>Legal</h3>
             <ul className="footer-links">
               <li><a href="#" onClick={() => handleNavigation('terms')}>Terms of Service</a></li>

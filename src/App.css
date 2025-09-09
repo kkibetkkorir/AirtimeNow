@@ -730,6 +730,12 @@ footer {
   margin-bottom: 40px;
 }
 
+.footer-column.wrapper{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .footer-column h3 {
   font-size: 1.3rem;
   margin-bottom: 20px;
@@ -938,4 +944,116 @@ footer {
   td:nth-of-type(5):before { content: "Payment Method"; }
   td:nth-of-type(6):before { content: "Date"; }
   td:nth-of-type(7):before { content: "Status"; }
+}
+
+
+/* Message styles */
+.message {
+  padding: 15px;
+  border-radius: var(--border-radius);
+  margin-bottom: 20px;
+  text-align: center;
+  font-weight: 500;
+}
+
+.message.info {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #c8e6c9;
+}
+
+.message.error {
+  background-color: #ffebee;
+  color: #c62828;
+  border: 1px solid #ffcdd2;
+}
+
+/* Payment options */
+.payment-options {
+  display: flex;
+  gap: 15px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.payment-option {
+  flex: 1;
+  min-width: 100px;
+  padding: 15px;
+  border: 2px solid #ddd;
+  border-radius: var(--border-radius);
+  text-align: center;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.payment-option:hover {
+  border-color: var(--primary);
+  background-color: rgba(67, 97, 238, 0.1);
+}
+
+.payment-option.selected {
+  border-color: var(--primary);
+  background-color: rgba(67, 97, 238, 0.2);
+}
+
+.payment-option i {
+  font-size: 24px;
+  margin-bottom: 10px;
+  display: block;
+  color: var(--primary);
+}
+
+.payment-option span {
+  display: block;
+  font-weight: 600;
+}
+
+/* Purchase modal */
+.purchase-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 30px;
+  border-radius: var(--border-radius);
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.modal-actions .btn {
+  flex: 1;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .payment-options {
+    flex-direction: column;
+  }
+
+  .payment-option {
+    min-width: auto;
+  }
+
+  .modal-content {
+    padding: 20px;
+  }
 }
