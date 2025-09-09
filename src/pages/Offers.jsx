@@ -1,18 +1,17 @@
-// pages/Offers.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { addDoc, collection, doc, updateDoc, arrayUnion } from 'firebase/firestore';
 
 const Offers = ({ user, db }) => {
   const [selectedOffer, setSelectedOffer] = useState(null);
-  const [paymentMethod, setPaymentMethod] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [loading, setLoading] = useState(false);
+  const [paystackLoaded, setPaystackLoaded] = useState(false);
 
   const offers = [
     {
       id: 1,
       name: 'Starter Pack',
-      price: 5,
+      price: 50,
       features: [
         '10% bonus airtime',
         'Valid for 30 days',
@@ -23,7 +22,7 @@ const Offers = ({ user, db }) => {
     {
       id: 2,
       name: 'Value Pack',
-      price: 15,
+      price: 100,
       features: [
         '15% bonus airtime',
         'Valid for 60 days',
@@ -35,75 +34,126 @@ const Offers = ({ user, db }) => {
     {
       id: 3,
       name: 'Premium Pack',
-      price: 30,
+      price: 250,
       features: [
         '20% bonus airtime',
         'Valid for 90 days',
         'All networks',
         'Instant delivery',
-        '3GB data bonus',
+        '2GB data bonus',
         '10 free SMS'
       ]
     }
   ];
 
-  const handlePurchase = async () => {
-    if (!user) {
-      alert('Please login to make a purchase');
-      return;
-    }
+  // Load Paystack script dynamically
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://js.paystack.co/v2/inline.js';
+    script.async = true;
+    script.onload = () => {
+      setPaystackLoaded(true);
+      console.log('Paystack script loaded');
+    };
+    script.onerror = () => {
+      console.error('Failed to load Paystack script');
+    };
+    document.body.appendChild(script);
 
-    if (!selectedOffer || !paymentMethod || !phoneNumber) {
-      alert('Please select an offer, payment method, and provide your phone number');
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+
+  const handlePaystackPayment = () => {
+    if (!user || !selectedOffer || !phoneNumber) {
+      alert('Please login, select an offer, and provide your phone number');
       return;
     }
 
     setLoading(true);
 
-    try {
-      // Simulate payment processing
-      let paymentStatus = 'pending';
+    // Initialize Paystack
+    const paystack = new window.PaystackPop();
 
-      if (paymentMethod === 'paypal') {
-        // Integrate PayPal payment here
-        // This is a mock implementation
-        paymentStatus = 'completed';
-      } else if (paymentMethod === 'mpesa') {
-        // Integrate M-Pesa STK push here
-        // This is a mock implementation
-        paymentStatus = 'completed';
+    // Generate a unique reference (you might want to use a better method)
+    const reference = `PSK_${user.uid.slice(0, 8)}_${Date.now()}`;
+
+    // Configure transaction
+    paystack.newTransaction({
+      key: 'pk_test_4ec79b6138a5fea7b8238817becd175e2fc9962e', // Replace with your actual public key
+      email: user.email || 'customer@example.com',
+      amount: selectedOffer.price * 100, // Convert to kobo
+      firstname: user.displayName ? user.displayName.split(' ')[0] : 'Customer',
+      lastname: user.displayName ? user.displayName.split(' ')[1] || '' : '',
+      phone: phoneNumber,
+      metadata: {
+        custom_fields: [
+          {
+            display_name: 'User ID',
+            variable_name: 'user_id',
+            value: user.uid
+          },
+          {
+            display_name: 'Offer ID',
+            variable_name: 'offer_id',
+            value: selectedOffer.id
+          },
+          {
+            display_name: 'Phone Number',
+            variable_name: 'phone_number',
+            value: phoneNumber
+          }
+        ]
+      },
+      reference: reference,
+      channels: ['card', 'bank', 'ussd', 'qr', 'mobile_money'],
+      onSuccess: async (transaction) => {
+        // Payment successful
+        try {
+          // Record the purchase
+          const purchaseData = {
+            userId: user.uid,
+            offerId: selectedOffer.id,
+            offerName: selectedOffer.name,
+            amount: selectedOffer.price,
+            paymentMethod: 'paystack',
+            phoneNumber,
+            status: 'completed',
+            transactionRef: transaction.reference,
+            createdAt: new Date()
+          };
+
+          // Add to purchases collection
+          const purchaseRef = await addDoc(collection(db, 'purchases'), purchaseData);
+
+          // Update user's purchase history
+          await updateDoc(doc(db, 'users', user.uid), {
+            purchases: arrayUnion(purchaseRef.id)
+          });
+
+          alert(`Purchase successful! Your ${selectedOffer.name} has been activated.`);
+          setSelectedOffer(null);
+          setPhoneNumber('');
+        } catch (error) {
+          console.error('Error recording purchase:', error);
+          alert('Payment was successful but there was an error recording your purchase. Please contact support with reference: ' + transaction.reference);
+        } finally {
+          setLoading(false);
+        }
+      },
+      onCancel: () => {
+        // User closed the payment modal
+        setLoading(false);
+        alert('Payment was cancelled');
+      },
+      onError: (error) => {
+        // Handle payment error
+        setLoading(false);
+        console.error('Paystack error:', error);
+        alert('Payment failed: ' + error.message);
       }
-
-      // Record the purchase
-      const purchaseData = {
-        userId: user.uid,
-        offerId: selectedOffer.id,
-        offerName: selectedOffer.name,
-        amount: selectedOffer.price,
-        paymentMethod,
-        phoneNumber,
-        status: paymentStatus,
-        createdAt: new Date()
-      };
-
-      // Add to purchases collection
-      const purchaseRef = await addDoc(collection(db, 'purchases'), purchaseData);
-
-      // Update user's purchase history
-      await updateDoc(doc(db, 'users', user.uid), {
-        purchases: arrayUnion(purchaseRef.id)
-      });
-
-      alert(`Purchase successful! Your ${selectedOffer.name} has been activated.`);
-      setSelectedOffer(null);
-      setPaymentMethod('');
-      setPhoneNumber('');
-    } catch (error) {
-      console.error('Error processing purchase:', error);
-      alert('There was an error processing your purchase. Please try again.');
-    } finally {
-      setLoading(false);
-    }
+    });
   };
 
   return (
@@ -133,8 +183,9 @@ const Offers = ({ user, db }) => {
                   className="btn btn-primary"
                   style={{ width: '100%' }}
                   onClick={() => setSelectedOffer(offer)}
+                  disabled={!paystackLoaded}
                 >
-                  Buy Now
+                  {paystackLoaded ? 'Buy Now' : 'Loading Payment...'}
                 </button>
               </div>
             </div>
@@ -160,39 +211,22 @@ const Offers = ({ user, db }) => {
                 />
               </div>
 
-              <div className="form-group">
-                <label>Payment Method</label>
-                <div className="payment-options">
-                  <div
-                    className={`payment-option ${paymentMethod === 'mpesa' ? 'selected' : ''}`}
-                    onClick={() => setPaymentMethod('mpesa')}
-                  >
-                    <i className="fas fa-mobile-alt"></i>
-                    <span>M-Pesa</span>
-                  </div>
-                  <div
-                    className={`payment-option ${paymentMethod === 'paypal' ? 'selected' : ''}`}
-                    onClick={() => setPaymentMethod('paypal')}
-                  >
-                    <i className="fab fa-paypal"></i>
-                    <span>PayPal</span>
-                  </div>
-                </div>
-              </div>
-
               <div className="modal-actions">
                 <button
                   className="btn btn-outline"
-                  onClick={() => setSelectedOffer(null)}
+                  onClick={() => {
+                    setSelectedOffer(null);
+                    setPhoneNumber('');
+                  }}
                 >
                   Cancel
                 </button>
                 <button
                   className="btn btn-primary"
-                  onClick={handlePurchase}
-                  disabled={loading}
+                  onClick={handlePaystackPayment}
+                  disabled={loading || !phoneNumber}
                 >
-                  {loading ? 'Processing...' : 'Confirm Purchase'}
+                  {loading ? 'Processing...' : 'Proceed to Payment'}
                 </button>
               </div>
             </div>
