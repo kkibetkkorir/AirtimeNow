@@ -87,7 +87,7 @@ const AdminDashboard = ({ user, db }) => {
               <div className="stat-card">
                 <h3>Total Revenue</h3>
                 <p className="stat-number">
-                  ${purchases.reduce((total, purchase) => total + purchase.amount, 0).toFixed(2)}
+                  KES{purchases.reduce((total, purchase) => total + purchase.amount, 0).toFixed(2)}
                 </p>
               </div>
             </div>
@@ -115,7 +115,7 @@ const AdminDashboard = ({ user, db }) => {
                     <td>{purchase.id.substring(0, 8)}...</td>
                     <td>{purchase.userId.substring(0, 8)}...</td>
                     <td>{purchase.offerName}</td>
-                    <td>${purchase.amount}</td>
+                    <td>KES{purchase.amount}</td>
                     <td>{purchase.paymentMethod}</td>
                     <td>{purchase.createdAt?.toDate().toLocaleDateString()}</td>
                     <td>

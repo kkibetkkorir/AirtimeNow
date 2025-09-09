@@ -83,7 +83,7 @@ const Profile = ({ user, userData, db }) => {
                   <div key={purchase.id} className="purchase-item">
                     <div className="purchase-details">
                       <h3>{purchase.offerName}</h3>
-                      <p>Amount: ${purchase.amount}</p>
+                      <p>Amount: KES{purchase.amount}</p>
                       <p>Payment Method: {purchase.paymentMethod}</p>
                       <p>Phone: {purchase.phoneNumber}</p>
                       <p>Date: {purchase.createdAt?.toDate().toLocaleDateString()}</p>

@@ -3,7 +3,7 @@ import { addDoc, collection, doc, updateDoc, arrayUnion } from 'firebase/firesto
 
 const Offers = ({ user, db }) => {
   const [selectedOffer, setSelectedOffer] = useState(null);
-  const [paymentMethod, setPaymentMethod] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('paystack');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [loading, setLoading] = useState(false);
   const [paystackLoaded, setPaystackLoaded] = useState(false);
@@ -13,7 +13,7 @@ const Offers = ({ user, db }) => {
     {
       id: 1,
       name: 'Starter Pack',
-      price: 5,
+      price: 50,
       features: [
         '10% bonus airtime',
         'Valid for 30 days',
@@ -24,7 +24,7 @@ const Offers = ({ user, db }) => {
     {
       id: 2,
       name: 'Value Pack',
-      price: 15,
+      price: 100,
       features: [
         '15% bonus airtime',
         'Valid for 60 days',
@@ -36,7 +36,7 @@ const Offers = ({ user, db }) => {
     {
       id: 3,
       name: 'Premium Pack',
-      price: 30,
+      price: 250,
       features: [
         '20% bonus airtime',
         'Valid for 90 days',
@@ -52,24 +52,32 @@ const Offers = ({ user, db }) => {
   const networkOffers = [
     {
       id: 4,
+      name: 'Safaricom OFA',
+      price: 100,
+      network: 'Safaricom',
+      description: 'Get 25% extra airtime on all Safaricom top-ups this week',
+      color: '#1c9e41ff'
+    },
+    {
+      id: 5,
       name: 'AT&T Special',
-      price: 10,
+      price: 80,
       network: 'AT&T',
       description: 'Get 15% extra airtime on all AT&T top-ups this week',
       color: '#e74c3c'
     },
     {
-      id: 5,
+      id: 6,
       name: 'Verizon Deal',
-      price: 20,
+      price: 50,
       network: 'Verizon',
       description: 'Double data bonus with every Verizon airtime purchase',
       color: '#3498db'
     },
     {
-      id: 6,
+      id: 7,
       name: 'T-Mobile Offer',
-      price: 25,
+      price:100,
       network: 'T-Mobile',
       description: 'Free international calls bonus with T-Mobile top-ups',
       color: '#9b59b6'
@@ -243,7 +251,7 @@ const Offers = ({ user, db }) => {
                 <h3>{offer.name}</h3>
               </div>
               <div className="offer-body">
-                <div className="offer-price">${offer.price}</div>
+                <div className="offer-price">KES{offer.price}</div>
                 <ul className="offer-features">
                   {offer.features.map((feature, index) => (
                     <li key={index}>
@@ -276,7 +284,7 @@ const Offers = ({ user, db }) => {
                 <h3>{offer.name}</h3>
               </div>
               <div className="offer-body">
-                <div className="offer-price">${offer.price}</div>
+                <div className="offer-price">KES{offer.price}</div>
                 <p>{offer.description}</p>
                 <button
                   className="btn btn-outline"
@@ -295,12 +303,12 @@ const Offers = ({ user, db }) => {
           <div className="purchase-modal">
             <div className="modal-content">
               <h2>Purchase {selectedOffer.name}</h2>
-              <p>Price: ${selectedOffer.price}</p>
+              <p>Price: KES{selectedOffer.price}</p>
 
               {selectedOffer.description && <p>{selectedOffer.description}</p>}
 
               <div className="form-group">
-                <label htmlFor="phone">Your Phone Number</label>
+                <label htmlFor="phone">Your Phone Number To Top-Up</label>
                 <input
                   type="tel"
                   id="phone"
@@ -323,7 +331,7 @@ const Offers = ({ user, db }) => {
                     <i className="fas fa-credit-card"></i>
                     <span>Paystack</span>
                   </div>
-                  <div
+                  {/*<div
                     className={`payment-option ${paymentMethod === 'mpesa' ? 'selected' : ''}`}
                     onClick={() => !loading && setPaymentMethod('mpesa')}
                   >
@@ -336,7 +344,7 @@ const Offers = ({ user, db }) => {
                   >
                     <i className="fab fa-paypal"></i>
                     <span>PayPal</span>
-                  </div>
+                  </div>*/}
                 </div>
               </div>
 

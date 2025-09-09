@@ -55,7 +55,7 @@ const RefundPolicy = () => {
 
           <div className="legal-section">
             <h2>5. Contact Information</h2>
-            <p>For any questions about our refund policy or to request a refund, please contact us at support@airtimehub.com.</p>
+            <p>For any questions about our refund policy or to request a refund, please contact us at support@airtimehub.biz.</p>
           </div>
         </div>
       </div>

@@ -66,7 +66,7 @@ const PrivacyPolicy = () => {
 
           <div className="legal-section">
             <h2>7. Contact Information</h2>
-            <p>If you have any questions about this privacy policy or our privacy practices, please contact us at privacy@airtimehub.com.</p>
+            <p>If you have any questions about this privacy policy or our privacy practices, please contact us at privacy@airtimehub.biz.</p>
           </div>
         </div>
       </div>

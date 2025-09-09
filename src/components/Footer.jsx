@@ -17,6 +17,7 @@ const Footer = ({ handleNavigation }) => {
             </div>
           </div>
           <div className="footer-column wrapper">
+            <div>
             <h3>Quick Links</h3>
             <ul className="footer-links">
               <li><a href="#" onClick={() => handleNavigation('home')}>Home</a></li>
@@ -24,25 +25,28 @@ const Footer = ({ handleNavigation }) => {
               <li><a href="#" onClick={() => handleNavigation('support')}>Support</a></li>
               <li><a href="#" onClick={() => handleNavigation('contact')}>Contact</a></li>
             </ul>
-            <h3>Legal</h3>
-            <ul className="footer-links">
+            </div>
+            <div>
+              <h3>Legal</h3>
+              <ul className="footer-links">
               <li><a href="#" onClick={() => handleNavigation('terms')}>Terms of Service</a></li>
               <li><a href="#" onClick={() => handleNavigation('privacy')}>Privacy Policy</a></li>
               <li><a href="#" onClick={() => handleNavigation('refund')}>Refund Policy</a></li>
               <li><a href="#" onClick={() => handleNavigation('faq')}>FAQ</a></li>
-            </ul>
+              </ul>
+            </div>
           </div>
           <div className="footer-column">
             <h3>Contact Us</h3>
             <ul className="footer-links">
-              <li><i className="fas fa-envelope"></i> support@airtimehub.com</li>
+              <li><i className="fas fa-envelope"></i> support@airtimehub.biz</li>
               <li><i className="fas fa-phone"></i> +1 (234) 567-8900</li>
-              <li><i className="fas fa-map-marker-alt"></i> 123 Tech Street, Silicon Valley, CA</li>
+              <li><i className="fas fa-map-marker-alt"></i> 123 Moi Av, Nairobi, KE</li>
             </ul>
           </div>
         </div>
         <div className="copyright">
-          <p>&copy; 2023 AirtimeHub. All rights reserved.</p>
+          <p>&copy; 2025 AirtimeHub. All rights reserved.</p>
         </div>
       </div>
     </footer>

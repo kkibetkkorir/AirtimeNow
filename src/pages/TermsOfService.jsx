@@ -62,7 +62,7 @@ const TermsOfService = () => {
 
           <div className="legal-section">
             <h2>8. Contact Information</h2>
-            <p>If you have any questions about these Terms, please contact us at legal@airtimehub.com.</p>
+            <p>If you have any questions about these Terms, please contact us at legal@airtimehub.biz.</p>
           </div>
         </div>
       </div>

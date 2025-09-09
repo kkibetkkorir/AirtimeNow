@@ -44,7 +44,7 @@ const Contact = () => {
               </div>
               <div>
                 <h3>Our Address</h3>
-                <p>123 Tech Street, Silicon Valley, CA 94301, USA</p>
+                <p>123 Moi Av, Nairobi, KE</p>
               </div>
             </div>
             <div className="contact-card">
@@ -63,8 +63,8 @@ const Contact = () => {
               </div>
               <div>
                 <h3>Email Address</h3>
-                <p>support@airtimehub.com</p>
-                <p>sales@airtimehub.com</p>
+                <p>support@airtimehub.biz</p>
+                <p>sales@airtimehub.biz</p>
               </div>
             </div>
           </div>
